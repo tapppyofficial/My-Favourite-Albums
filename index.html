@@ -121,7 +121,11 @@
 
     // ---- EXPORT PNG ----
     document.getElementById("exportBtn").onclick = () => {
-      html2canvas(template, { scale: 3 }).then((canvas) => {
+      html2canvas(template, {
+  scale: 3,
+  useCORS: true,
+  allowTaint: false
+}).then((canvas) => {
         let link = document.createElement("a");
         link.download = "albums_collage.png";
         link.href = canvas.toDataURL();
@@ -152,11 +156,13 @@
         if (!imgUrl) return;
 
         const img = document.createElement("img");
+        img.crossOrigin = "anonymous";
         img.src = imgUrl;
 
         img.onclick = () => {
           if (!activeSlot) return alert("Select a slot first (click it).");
           const inserted = new Image();
+          img.crossOrigin = "anonymous";
           inserted.src = imgUrl;
           inserted.style.width = "100%";
           inserted.style.height = "100%";
