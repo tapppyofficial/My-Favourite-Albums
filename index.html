@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Album Collage Maker</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+      margin: 20px;
+    }
+    #template {
+      position: relative;
+      width: 600px;
+      aspect-ratio: 1/1;
+      border: 1px dashed #999;
+    }
+    .slot {
+      position: absolute;
+      background-size: cover;
+      background-position: center;
+      border: 1px solid #000;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h2>My Favorite Albums — Collage Maker</h2>
+  <p>Click any square to upload an album cover.</p>
+
+  <div id="template"></div>
+
+  <button id="exportBtn">Download PNG</button>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script>
+    const template = document.getElementById("template");
+
+    // slot layout (based on user's image grid)
+    const slots = [
+  { x: 50, y: 160, w: 60, h: 60 },
+  { x: 50, y: 240, w: 60, h: 60 },
+  { x: 500, y: 160, w: 60, h: 60 },
+  { x: 500, y: 240, w: 60, h: 60 },
+  { x: 275, y: 160, w: 60, h: 60 },
+  { x: 275, y: 240, w: 60, h: 60 },
+  { x: 122.5, y: 160, w: 140, h: 140 },
+  { x: 195, y: 310, w: 140, h: 140 },
+  { x: 347.5, y: 235, w: 140, h: 140 },
+  { x: 347.5, y: 85, w: 140, h: 140 },
+  { x: 347.5, y: 390, w: 60, h: 60 },
+  { x: 122.5, y: 87.5, w: 60, h: 60 },
+  { x: 195, y: 87.5, w: 60, h: 60 },
+  { x: 122.5, y: 310, w: 60, h: 60 },
+  { x: 275, y: 460, w: 60, h: 60 },
+];
+
+    slots.forEach((slot, i) => {
+      const div = document.createElement("div");
+      div.className = "slot";
+      div.style.left = slot.x + "px";
+      div.style.top = slot.y + "px";
+      div.style.width = slot.w + "px";
+      div.style.height = slot.h + "px";
+
+      div.onclick = () => {
+        let input = document.createElement("input");
+        input.type = "file";
+        input.accept = "image/*";
+        input.onchange = e => {
+          let file = e.target.files[0];
+          let url = URL.createObjectURL(file);
+          const img = new Image();
+          img.src = url;
+          img.style.width = "100%";
+          img.style.height = "100%";
+          img.style.objectFit = "cover";
+          div.innerHTML = "";
+          div.appendChild(img);
+
+        };
+        input.click();
+      };
+
+      template.appendChild(div);
+    });
+
+    document.getElementById("exportBtn").onclick = () => {
+      html2canvas(template, { scale: 2 }).then(canvas => {
+        let link = document.createElement("a");
+        link.download = "albums_collage.png";
+        link.href = canvas.toDataURL();
+        link.click();
+      });
+    };
+  </script>
+</body>
+</html>
